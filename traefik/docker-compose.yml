@@ -1,0 +1,20 @@
+services:
+  traefik:
+    image: traefik:v3.7
+    container_name: traefik
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config/traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./certs:/var/traefik/certs:rw
+    networks:
+      - proxy
+    ports:
+      - 80:80
+      - 8080:8080
+      - 443:443
+    environment:
+      - CF_DNS_API_TOKEN=${CF_DNS_API_TOKEN}
+networks: 
+    proxy:
+      external: true

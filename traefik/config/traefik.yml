@@ -1,0 +1,41 @@
+global:
+  sendAnonymousUsage: false
+log:
+  level: INFO
+api:
+  insecure: true
+entryPoints:
+  web:
+    address: :80
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+          permanent: true
+  websecure:
+    address: :443
+    http:
+      tls:
+        certResolver: cloudflare-resolver
+        domains:
+          - main: home.galacticwaffle.com
+            sans:
+              - "*.home.galacticwaffle.com"
+certificatesResolvers:
+  cloudflare-resolver:
+    acme:
+      email: sl0g515r@galacticwaffle.com 
+      storage: /var/traefik/certs/cloudflare-acme.json
+      certificatesDuration: 2160  # 90 days
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+          - "1.1.1.1:53"
+          - "1.0.0.1:53"
+        propagation:
+          delayBeforeChecks: 20
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
