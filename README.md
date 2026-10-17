@@ -11,6 +11,7 @@ I want every service I self-host (reverse proxy, apps, monitoring, etc.) defined
 Each top-level folder is a standalone stack with its own `docker-compose.yml`.
 
 - `traefik/`: Reverse proxy with automatic SSL via Let's Encrypt, using the Cloudflare DNS challenge.
+- `media/`: Jellyfin + *arr stack (qBittorrent, SABnzbd, Prowlarr, Radarr, Sonarr, Seerr) for media management. See [`media/README.md`](media/README.md) for setup and the required data folder structure.
 
 ## Usage
 

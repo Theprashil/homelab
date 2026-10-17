@@ -8,6 +8,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ${DATA_ROOT}:/data
+      - ${DATA_ROOT}/configs/jellyfin:/config
     ports:
       - 7359:7359/udp
       - 1900:1900/udp
@@ -30,7 +31,8 @@ services:
       - TZ=${TIMEZONE}
       - WEBUI_PORT=8080
     volumes:
-      - ${DATA_ROOT}:/data 
+      - ${DATA_ROOT}:/data
+      - ${DATA_ROOT}/configs/qbittorrent:/config
     ports:
       - 6881:6881
       - 6881:6881/udp
@@ -42,6 +44,26 @@ services:
       - traefik.http.routers.qbittorrent.entrypoints=web,websecure
       - traefik.http.routers.qbittorrent.rule=(Host(`${QBITTORRENT_HOSTNAME}`))
       - traefik.http.services.qbittorrent.loadbalancer.server.port=8080
+  sabnzbd:
+    image: lscr.io/linuxserver/sabnzbd:latest
+    container_name: sabnzbd
+    environment:
+      - PUID=${USER_ID}
+      - PGID=${GROUP_ID}
+      - TZ=${TIMEZONE}
+    volumes:
+      - ${DATA_ROOT}:/data 
+      - ${DATA_ROOT}/configs/sabnzbd:/config
+    restart: always
+    ports:
+      - 8082:8080
+    networks:
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sabnzbd.entrypoints=web,websecure
+      - traefik.http.routers.sabnzbd.rule=(Host(`${SABNZBD_HOSTNAME}`))
+      - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -50,6 +72,8 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     restart: unless-stopped
+    volumes:
+      - ${DATA_ROOT}/configs/prowlarr:/config
     networks:
       - proxy
     labels:
@@ -65,7 +89,8 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     volumes:
-       - ${DATA_ROOT}:/data 
+      - ${DATA_ROOT}:/data 
+      - ${DATA_ROOT}/configs/radarr:/config
     restart: unless-stopped
     networks:
       - proxy
@@ -82,7 +107,8 @@ services:
       - PGID=${GROUP_ID}
       - TZ=${TIMEZONE}
     volumes:
-       - ${DATA_ROOT}:/data 
+      - ${DATA_ROOT}:/data 
+      - ${DATA_ROOT}/configs/sonarr:/config
     restart: unless-stopped
     networks:
       - proxy
