@@ -4,38 +4,28 @@ Self-hosted media stack: Jellyfin for streaming, qBittorrent and SABnzbd for dow
 
 ## Services
 
-| Service     | Purpose                                      | Hostname env var       |
-|-------------|-----------------------------------------------|-------------------------|
-| Jellyfin    | Media server / streaming                      | `JELLYFIN_HOSTNAME`     |
-| qBittorrent | Torrent downloads                             | `QBITTORRENT_HOSTNAME`  |
-| SABnzbd     | Usenet downloads                              | `SABNZBD_HOSTNAME`      |
-| Prowlarr    | Indexer manager, feeds Radarr/Sonarr           | `PROWLARR_HOSTNAME`     |
-| Radarr      | Movie library automation                      | `RADARR_HOSTNAME`       |
-| Sonarr      | TV show library automation                    | `SONARR_HOSTNAME`       |
-| Seerr       | Media request management                      | `SEERR_HOSTNAME`        |
+- **Jellyfin** — media server / streaming (`JELLYFIN_HOSTNAME`)
+- **qBittorrent** — torrent downloads (`QBITTORRENT_HOSTNAME`)
+- **SABnzbd** — usenet downloads (`SABNZBD_HOSTNAME`)
+- **Prowlarr** — indexer manager, feeds Radarr/Sonarr (`PROWLARR_HOSTNAME`)
+- **Radarr** — movie library automation (`RADARR_HOSTNAME`)
+- **Sonarr** — TV show library automation (`SONARR_HOSTNAME`)
+- **Seerr** — media requests (`SEERR_HOSTNAME`)
 
-Every service shares one `DATA_ROOT` env var, which is bind-mounted into each container as `/data`. Configs for each app live under `${DATA_ROOT}/configs/<service>`, and media/downloads live directly under `${DATA_ROOT}`. Because every container sees the same `/data`, a path set inside one app's UI (e.g. qBittorrent's save path) is the exact same path Radarr/Sonarr will see when they pick up a finished download — no remote path mappings needed, as long as everything stays under `DATA_ROOT`.
+They all share `DATA_ROOT` (mounted as `/data` in every container) and `CONFIG_ROOT` (each service gets its own `${CONFIG_ROOT}/<service>` mounted as `/config`) — both set in the root [`README.md`](../README.md). Because every container sees the same `/data`, a path set inside one app's UI (e.g. qBittorrent's save path) is the exact same path Radarr/Sonarr will see when they pick up a finished download — no remote path mappings needed, as long as everything stays under `DATA_ROOT`.
 
 ## Setup
 
-1. Copy the env file and fill in your values (`DATA_ROOT`, hostnames, API keys, timezone, etc.):
+1. Copy the env file and fill in your values (hostnames, API keys, timezone, etc.):
 
    ```bash
    cp .env.example .env
    ```
 
-2. Create the data folder structure on the host. These folders live under `data/` (gitignored — see root `.gitignore`), so they won't exist after a fresh clone and need to be created manually before first run:
-
-   ```bash
-   mkdir -p data/{downloads/qbittorrent/{completed,incomplete,torrents},movies,shows}
-   mkdir -p data/downloads/nzbget/{completed,intermediate,nzb,queue,tmp}
-   ```
-
-   Resulting layout:
+2. Make sure the data folders exist (see root `README.md` for the one-liner that sets these up). They live under the repo's `data/`, which is gitignored, so they won't exist right after cloning:
 
    ```
    data/
-   ├── configs/            # per-service app config/state, created automatically on first run
    ├── downloads/
    │   ├── qbittorrent/
    │   │   ├── completed/

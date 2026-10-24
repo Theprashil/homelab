@@ -8,7 +8,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ${DATA_ROOT}:/data
-      - ${DATA_ROOT}/configs/jellyfin:/config
+      - ${CONFIG_ROOT}/jellyfin:/config
     ports:
       - 7359:7359/udp
       - 1900:1900/udp
@@ -32,7 +32,7 @@ services:
       - WEBUI_PORT=8080
     volumes:
       - ${DATA_ROOT}:/data
-      - ${DATA_ROOT}/configs/qbittorrent:/config
+      - ${CONFIG_ROOT}/qbittorrent:/config
     ports:
       - 6881:6881
       - 6881:6881/udp
@@ -53,7 +53,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ${DATA_ROOT}:/data 
-      - ${DATA_ROOT}/configs/sabnzbd:/config
+      - ${CONFIG_ROOT}/sabnzbd:/config
     restart: always
     ports:
       - 8082:8080
@@ -73,7 +73,7 @@ services:
       - TZ=${TIMEZONE}
     restart: unless-stopped
     volumes:
-      - ${DATA_ROOT}/configs/prowlarr:/config
+      - ${CONFIG_ROOT}/prowlarr:/config
     networks:
       - proxy
     labels:
@@ -90,7 +90,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ${DATA_ROOT}:/data 
-      - ${DATA_ROOT}/configs/radarr:/config
+      - ${CONFIG_ROOT}/radarr:/config
     restart: unless-stopped
     networks:
       - proxy
@@ -108,7 +108,7 @@ services:
       - TZ=${TIMEZONE}
     volumes:
       - ${DATA_ROOT}:/data 
-      - ${DATA_ROOT}/configs/sonarr:/config
+      - ${CONFIG_ROOT}/sonarr:/config
     restart: unless-stopped
     networks:
       - proxy
@@ -125,7 +125,7 @@ services:
       - LOG_LEVEL=INFO
       - TZ=${TIMEZONE}
     volumes:
-      - ${DATA_ROOT}/configs/seerr:/app/config
+      - ${CONFIG_ROOT}/seerr:/app/config
     healthcheck:
       test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
       start_period: 20s
